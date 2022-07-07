@@ -12,26 +12,43 @@ public class Main {
     }
 
     public static void start() {
-        ReadJSONFile readJSONFile = new ReadJSONFile();
-
-        try {
-            readJSONFile.read(FilePath.JSONFILE.value);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (EmptyJsonFileExeption e) {
-            e.printStackTrace();
-        }
+        ReadJSON readJSON = new ReadJSON();
 
         System.out.println("------------------------------------- STARTING APPLICATION--------------------------------");
         System.out.println("Select option 1 for retrieving posts by user id, select 2 for geting all the : ");
 
         Scanner scanner = new Scanner(System.in);
+        String option = scanner.nextLine();
+        String userInput = null;
+        String url = null;
+        List<UserPost> userPosts = null;
 
-        String userInput = scanner.nextLine();
+        switch (option){
+            case "1":
+                System.out.println("Please enter user-id:");
+                userInput = scanner.nextLine();
+                if (readJSON.validateUserInput(userInput)) {
+                    url = "https://gorest.co.in/public/v2/users/" + userInput + "/posts";
+                }else{
+                    System.out.println("Ivalid user ID was provided");
+                }
+                break;
+            case "2":
+                System.out.println("All user posts");
+                url = "https://gorest.co.in/public/v2/posts";
+                break;
+        }
 
-        scanner.close();
-        if (readJSONFile.validateUserInput(userInput)) {
-            List<UserPost> userPosts = readJSONFile.getUserPostsByID(userInput);
+            try {
+                readJSON.read(url);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            } catch (EmptyJsonExeption e) {
+                e.printStackTrace();
+            }
+
+             userPosts = option.equals("1") ?  readJSON.getUserPostsByID(userInput): readJSON.getAllPosts() ;
+
             try {
                 userPosts.forEach(System.out::println);
             } catch (NullPointerException e) {
@@ -39,8 +56,5 @@ public class Main {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
-            System.out.println("No such post was found with given id");
-        }
     }
 }
