@@ -37,8 +37,11 @@ public class Main {
                 System.out.println("All user posts");
                 url = "https://gorest.co.in/public/v2/posts";
                 break;
+            default:
+                System.out.println("No such option as: " + option);
         }
 
+        if(option.equals("1") || option.equals("2")){
             try {
                 readJSON.read(url);
             } catch (JsonProcessingException e) {
@@ -47,7 +50,7 @@ public class Main {
                 e.printStackTrace();
             }
 
-             userPosts = option.equals("1") ?  readJSON.getUserPostsByID(userInput): readJSON.getAllPosts() ;
+            userPosts = option.equals("1") ?  readJSON.getUserPostsByID(userInput): readJSON.getAllPosts() ;
 
             try {
                 userPosts.forEach(System.out::println);
@@ -56,5 +59,6 @@ public class Main {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
     }
 }
